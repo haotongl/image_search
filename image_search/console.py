@@ -35,6 +35,7 @@ def main():
         "--limit", help="Amount of images to be scraped.", default=1000, required=False)
     parser.add_argument("--json", help="Should image metadata be downloaded?",
                         action='store_true', required=False)
+    parser.add_argument("--output_path", default="/nas/home/linhaotong/Datasets/chronology")
     parser.add_argument(
         "--url", help="Google: Scrape images from a google image search link", required=False)  # Google Specific
     parser.add_argument("--adult-filter-off", help="Disable adult filter",
@@ -58,19 +59,22 @@ def main():
     	sys.exit("Invalid engine specified.")
 
     cwd = os.getcwd()
+    cwd = args.output_path
 
     # check directory and create if necessary
     if not os.path.isdir("{}/dataset/".format(cwd)):
         os.makedirs("{}/dataset/".format(cwd))
     if not os.path.isdir("{}/dataset/{}/{}".format(cwd, engine, query)):
         os.makedirs("{}/dataset/{}/{}".format(cwd, engine, query))
+    if not os.path.isdir("{}/dataset/{}/{}".format(cwd, engine, query+'_json')):
+        os.makedirs("{}/dataset/{}/{}".format(cwd, engine, query+'_json'))
     if not os.path.isdir("{}/dataset/logs/{}/".format(cwd, engine, query)):
         os.makedirs("{}/dataset/logs/{}/".format(cwd, engine, query))
 
     if engine == "google":
         _google.google(url, metadata, query, limit)
     else:
-        _bing.bing(metadata, query, limit, adult)
+        _bing.bing(metadata, query, limit, adult, args.output_path)
 
 
 if __name__ == "__main__":
